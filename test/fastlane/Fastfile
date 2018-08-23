@@ -1,0 +1,68 @@
+default_platform(:ios)
+
+platform :ios do
+  desc "Description of what the lane does"
+  lane :test do
+  	scan(
+      # workspace: "FinupCredit.xcworkspace",
+      # scheme: "test",
+      devices: ["iPhone 8 Plus"],
+    )
+	 end
+
+  lane :beta do |values|
+    scan(
+      # workspace: "FinupCredit.xcworkspace",
+      devices: ["iPhone 8 Plus"],
+    )
+  	v = values[:i]
+  	time = Time.new.strftime("%Y%m%d")
+  	version = get_version_number
+  	ipaName = "debug_#{version}_#{time}_V_#{v}.ipa"
+    gym(
+  	  clean: true,
+	  configuration: "Debug",
+	  export_method: "development",
+	  output_directory: "./Debug",
+	  output_name:  "#{ipaName}",
+	)
+	end
+
+	lane :release do |values|
+    scan(
+      # workspace: "FinupCredit.xcworkspace",
+      devices: ["iPhone 8 Plus"],
+    )
+  	v = values[:i]
+  	time = Time.new.strftime("%Y%m%d")
+  	version = get_version_number
+  	ipaName = "release_#{version}_#{time}_V_#{v}.ipa"
+    gym(
+  	  clean: true,
+	  configuration: "Release",
+	  export_method: "app-store",
+	  output_directory: "./Release",
+	  output_name:  "#{ipaName}",
+	)
+	end
+
+	desc "使用opetionPlist来指定打包配置"
+	lane :useOptionPlist do |values|
+    scan(
+      # workspace: "FinupCredit.xcworkspace",
+      devices: ["iPhone 8 Plus"],
+    )
+  	v = values[:i]
+  	time = Time.new.strftime("%Y%m%d")
+  	version = get_version_number
+  	ipaName = "debug_#{version}_#{time}_V_#{v}.ipa"
+    gym(
+  	  clean: true,
+	  configuration: "Release",
+	  export_method: "development",
+	  output_directory: "./Release",
+	  output_name:  "#{ipaName}",
+	  export_options: "./ExportOptions_app_store.plist" 
+	)
+	end
+end
